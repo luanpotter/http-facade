@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class HttpFacade {
 
@@ -20,11 +21,13 @@ public class HttpFacade {
     private Object body;
     private boolean isGzip;
     private Integer timeout = 3 * 60 * 1000;
+    private boolean followRedirects;
 
     public HttpFacade(String baseUrl) {
         this.baseUrl = baseUrl;
         this.headers = new ArrayList<>();
         this.queries = new ArrayList<>();
+        this.followRedirects = false;
     }
 
     public HttpFacade timeout(int ms) {
@@ -34,6 +37,16 @@ public class HttpFacade {
 
     public HttpFacade noTimeout() {
         this.timeout = null;
+        return this;
+    }
+
+    public HttpFacade followRedirects() {
+        this.followRedirects = true;
+        return this;
+    }
+
+    public HttpFacade cookies(Map<String, String> cookies) {
+        header("Cookie", cookies.entrySet().stream().map(c -> c.getKey() + "=" + c.getValue() + "; ").collect(Collectors.joining()));
         return this;
     }
 
@@ -60,7 +73,7 @@ public class HttpFacade {
     public HttpURLConnection generateConnection() throws IOException {
         URL obj = new URL(getUrl());
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setInstanceFollowRedirects(false);
+        con.setInstanceFollowRedirects(followRedirects);
         con.setRequestMethod(method);
         if (timeout != null) {
             con.setConnectTimeout(timeout);
