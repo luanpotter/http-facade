@@ -19,16 +19,22 @@ public class HttpFacade {
     private List<Entry<String, String>> headers, queries;
     private Object body;
     private boolean isGzip;
-    private int timeout = 3 * 60 * 1000;
+    private Integer timeout = 3 * 60 * 1000;
 
-    public HttpFacade(String baseUrl, String timeoutInSeconds) {
+    public HttpFacade(String baseUrl) {
         this.baseUrl = baseUrl;
         this.headers = new ArrayList<>();
         this.queries = new ArrayList<>();
+    }
 
-        if (timeoutInSeconds != null) {
-            this.timeout = Integer.parseInt(timeoutInSeconds) * 1000;
-        }
+    public HttpFacade timeout(int ms) {
+        this.timeout = ms;
+        return this;
+    }
+
+    public HttpFacade noTimeout() {
+        this.timeout = null;
+        return this;
     }
 
     public HttpFacade header(String k, String v) {
@@ -56,7 +62,9 @@ public class HttpFacade {
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setInstanceFollowRedirects(false);
         con.setRequestMethod(method);
-        con.setConnectTimeout(timeout);
+        if (timeout != null) {
+            con.setConnectTimeout(timeout);
+        }
         setHeaders(con);
         setBody(con);
         return con;

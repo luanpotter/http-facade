@@ -27,13 +27,13 @@ public class Response {
 
     private String contentGzip() throws IOException {
         GZIPInputStream gs = new GZIPInputStream(conn.getInputStream());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         int numBytesRead;
         byte[] tempBytes = new byte[6000];
         while ((numBytesRead = gs.read(tempBytes, 0, tempBytes.length)) != -1) {
-            baos.write(tempBytes, 0, numBytesRead);
+            stream.write(tempBytes, 0, numBytesRead);
         }
-        return baos.toString();
+        return stream.toString();
     }
 
     public String error() throws IOException {
@@ -42,6 +42,18 @@ public class Response {
 
     public int status() throws IOException {
         return conn.getResponseCode();
+    }
+
+    public HttpURLConnection getConnection() {
+        return conn;
+    }
+
+    public String header(String key) {
+        return conn.getHeaderField(key);
+    }
+
+    public List<String> headers(String key) {
+        return conn.getHeaderFields().get(key);
     }
 
     public String location() {

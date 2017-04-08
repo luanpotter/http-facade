@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class Util {
 
     private Util() {
-        throw new RuntimeException("Should never be instanciated");
+        throw new RuntimeException("Should never be instantiated");
     }
 
     public static String toString(InputStream stream) throws IOException {
