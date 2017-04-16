@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>http-facade</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
