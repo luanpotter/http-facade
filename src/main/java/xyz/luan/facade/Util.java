@@ -1,12 +1,10 @@
 package xyz.luan.facade;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Util {
 
@@ -15,9 +13,8 @@ public class Util {
     }
 
     public static String toString(InputStream stream) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            return reader.lines().collect(Collectors.joining("\n"));
-        }
+        Scanner s = new Scanner(stream, "UTF-8").useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     public static String extract(String pattern, String haystack) {
