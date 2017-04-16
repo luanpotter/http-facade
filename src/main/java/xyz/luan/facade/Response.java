@@ -63,11 +63,19 @@ public class Response {
     public Map<String, String> cookies() {
         List<String> strings = conn.getHeaderFields().get("Set-Cookie");
         Map<String, String> cookies = new HashMap<>();
-        for (String cookie : strings) {
-            String name = Util.extract("^([a-zAA-Z0-9_]*)=", cookie);
-            String value = Util.extract("^[a-zAA-Z0-9_]*=([^;]*)", cookie);
-            cookies.put(name, value);
+        if (strings == null) {
+            extractCookie(cookies, conn.getHeaderField("Set-Cookie"));
+        } else {
+            for (String cookie : strings) {
+                extractCookie(cookies, cookie);
+            }
         }
         return cookies;
+    }
+
+    private void extractCookie(Map<String, String> cookies, String cookie) {
+        String name = Util.extract("^([a-zAA-Z0-9_]*)=", cookie);
+        String value = Util.extract("^[a-zAA-Z0-9_]*=([^;]*)", cookie);
+        cookies.put(name, value);
     }
 }

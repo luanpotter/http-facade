@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HttpFacade {
@@ -46,7 +47,11 @@ public class HttpFacade {
     }
 
     public HttpFacade cookies(Map<String, String> cookies) {
-        header("Cookie", cookies.entrySet().stream().map(c -> c.getKey() + "=" + c.getValue() + "; ").collect(Collectors.joining()));
+        StringBuilder str = new StringBuilder();
+        for (Entry<String, String> c : cookies.entrySet()) {
+            str.append(c.getKey()).append("=").append(c.getValue()).append("; ");
+        }
+        header("Cookie", str.toString());
         return this;
     }
 
