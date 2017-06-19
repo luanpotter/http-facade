@@ -146,12 +146,20 @@ public class HttpFacade {
         return method("POST").req();
     }
 
+    public Response put() throws IOException {
+        return method("PUT").req();
+    }
+
+    public Response delete() throws IOException {
+        return method("DELETE").req();
+    }
+
     public HttpFacade method(String method) {
         this.method = method;
         return this;
     }
 
-    private Response req() throws IOException {
+    public Response req() throws IOException {
         return new Response(generateConnection(), isGzip);
     }
 
