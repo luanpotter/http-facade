@@ -48,6 +48,10 @@ public class Response {
         return conn;
     }
 
+    public Map<String,List<String>> headers(){
+        return conn.getHeaderFields();
+    }
+
     public String header(String key) {
         return conn.getHeaderField(key);
     }
