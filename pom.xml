@@ -7,11 +7,11 @@
     <parent>
         <groupId>xyz.luan</groupId>
         <artifactId>parent-pom</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
 
     <artifactId>http-facade</artifactId>
-    <version>1.4</version>
+    <version>1.4.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,18 +28,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
