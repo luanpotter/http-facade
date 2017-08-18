@@ -22,6 +22,8 @@ public class HttpFacade {
     private boolean isGzip;
     private Integer timeout = 3 * 60 * 1000;
     private boolean followRedirects;
+    private boolean fixedSize = false;
+
 
     public HttpFacade(String baseUrl) {
         this.baseUrl = baseUrl;
@@ -74,6 +76,12 @@ public class HttpFacade {
         return this;
     }
 
+    public HttpFacade withFixedSize() {
+        this.fixedSize = true;
+        return this;
+    }
+
+
     public HttpURLConnection generateConnection() throws IOException {
         URL obj = new URL(getUrl());
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -81,6 +89,9 @@ public class HttpFacade {
         con.setRequestMethod(method);
         if (timeout != null) {
             con.setConnectTimeout(timeout);
+        }
+        if(fixedSize){
+            con.setFixedLengthStreamingMode(body.toString().length());
         }
         setHeaders(con);
         setBody(con);
@@ -161,5 +172,4 @@ public class HttpFacade {
     public Response req() throws IOException {
         return new Response(generateConnection(), isGzip);
     }
-
 }
