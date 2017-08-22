@@ -83,28 +83,28 @@ public class Response {
         cookies.put(name, value);
     }
     
-    public static boolean isInformational(int code) {
-        int status = status();
-        return ((status <= code) && (code <= status));
+   public static boolean isInformational() {
+        int code = status();
+        return ((100 <= code) && (code <= 199));
     }
 
-    public static boolean isSuccess(int code) {
-        int status = status();
-        return ((status <= code) && (code <= status));
+    public static boolean isSuccess() {
+        int code = status();
+        return ((200 <= code) && (code <= 299));
     }
 
-    public static boolean isRedirection(int code) {
-        int status = status();
-        return ((status <= code) && (code <= status));
+    public static boolean isRedirection() {
+        int code = status();
+        return ((300 <= code) && (code <= 399));
     }
 
-    public static boolean isClientError(int code) {
-        int status = status();
-        return ((status <= code) && (code <= status));
+    public static boolean isClientError() {
+        int code = status();
+        return ((400 <= code) && (code <= 499));
     }
 
-    public static boolean isServerError(int code) {
-        int status = status();
-        return ((status <= code) && (code <= status));
+    public static boolean isServerError() {
+        int code = status();
+        return ((500 <= code) && (code <= 599));
     }
 }
