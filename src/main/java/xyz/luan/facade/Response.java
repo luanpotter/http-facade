@@ -83,53 +83,28 @@ public class Response {
 		cookies.put(name, value);
 	}
 
-	public boolean isInformational() {
-		int code;
-		try {
-			code = status();
-			return ((100 <= code) && (code <= 199));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public boolean isInformational() throws IOException {
+		int code = status();
+		return ((100 <= code) && (code <= 199));
 	}
 
-	public boolean isSuccess() {
-		int code;
-		try {
-			code = status();
-			return ((200 <= code) && (code <= 299));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public boolean isSuccess() throws IOException {
+		int code = status();
+		return ((200 <= code) && (code <= 299));
 	}
 
-	public boolean isRedirection() {
-		int code;
-		try {
-			code = status();
-			return ((300 <= code) && (code <= 399));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public boolean isRedirection() throws IOException {
+		int code = status();
+		return ((300 <= code) && (code <= 399));
 	}
 
-	public boolean isClientError() {
-		int code;
-		try {
-			code = status();
-			return ((400 <= code) && (code <= 499));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public boolean isClientError() throws IOException {
+		int code = status();
+		return ((400 <= code) && (code <= 499));
 	}
 
-	public boolean isServerError() {
-		int code;
-		try {
-			code = status();
-			return ((500 <= code) && (code <= 599));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+	public boolean isServerError() throws IOException {
+		int code = status();
+		return ((500 <= code) && (code <= 599));
 	}
 }
