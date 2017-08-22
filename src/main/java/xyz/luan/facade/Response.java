@@ -82,4 +82,29 @@ public class Response {
         String value = Util.extract("^[a-zAA-Z0-9_]*=([^;]*)", cookie);
         cookies.put(name, value);
     }
+    
+    public static boolean isInformational(int code) {
+        int status = status();
+        return ((status <= code) && (code <= status));
+    }
+
+    public static boolean isSuccess(int code) {
+        int status = status();
+        return ((status <= code) && (code <= status));
+    }
+
+    public static boolean isRedirection(int code) {
+        int status = status();
+        return ((status <= code) && (code <= status));
+    }
+
+    public static boolean isClientError(int code) {
+        int status = status();
+        return ((status <= code) && (code <= status));
+    }
+
+    public static boolean isServerError(int code) {
+        int status = status();
+        return ((status <= code) && (code <= status));
+    }
 }
