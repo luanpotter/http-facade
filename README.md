@@ -29,5 +29,8 @@ Simple get:
 More complex request:
 
 ```java
-    new HttpFacade("luan.xyz/api/people").header("key", "value").body("{ id: 42, name: \"Luan\" }").post();
+    new HttpFacade("luan.xyz/api/people")
+        .header("key", "value")
+        .body("{ id: 42, name: \"Luan\" }")
+    .post();
 ```
