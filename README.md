@@ -12,7 +12,7 @@ My take on a simple HTTP Façade for easy request making.
 <dependency>
     <groupId>xyz.luan</groupId>
     <artifactId>http-facade</artifactId>
-    <version>1.3</version>
+    <version>1.5.1</version>
 </dependency>
 ```
 
