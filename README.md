@@ -18,4 +18,16 @@ My take on a simple HTTP Façade for easy request making.
 
 ## Examples
 
-TODO
+Simple get:
+
+```java
+    Response r = new HttpFacade("www.google.com").get();
+    r.status() // 200
+    r.content() // <html>...
+```
+
+More complex request:
+
+```java
+    new HttpFacade("luan.xyz/api/people").header("key", "value").body("{ id: 42, name: \"Luan\" }").post();
+```
