@@ -18,13 +18,19 @@ public class Util {
     }
 
     public static String extract(String pattern, String haystack) {
+        return extractAll(pattern, haystack).group(1);
+    }
+
+    public static Matcher extractAll(String pattern, String haystack) {
         Pattern p = Pattern.compile(".*?" + pattern + ".*?");
         Matcher m = p.matcher(haystack);
         if (!m.matches()) {
             throw new RuntimeException("Invalid text, regex not found: \"" + haystack + "\"");
         }
-
-        return m.group(1);
+        return m;
     }
 
+    public static String encodeBase64(String str) {
+        return Base64.encode(str.getBytes());
+    }
 }

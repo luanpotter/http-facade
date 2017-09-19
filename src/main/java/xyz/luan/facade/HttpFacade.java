@@ -8,16 +8,18 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HttpFacade {
 
     private String method;
     private String baseUrl;
-    private List<Entry<String, String>> headers, queries;
+    private List<Entry<String, String>> headers, queries, formParams;
     private Object body;
     private boolean isGzip;
     private Integer timeout = 3 * 60 * 1000;
@@ -29,6 +31,7 @@ public class HttpFacade {
         this.baseUrl = baseUrl;
         this.headers = new ArrayList<>();
         this.queries = new ArrayList<>();
+        this.formParams = new ArrayList<>();
         this.followRedirects = false;
     }
 
@@ -81,6 +84,17 @@ public class HttpFacade {
         return this;
     }
 
+    public HttpFacade user(String user, String pass) {
+        String token = user + ":" + pass;
+        Matcher m = Pattern.compile("([a-z0-9A-Z]*)://(.*)").matcher(baseUrl);
+        if (!m.matches()) {
+            baseUrl = token + "@" + baseUrl;
+        } else {
+            baseUrl = m.group(1) + "://" + token + "@" + m.group(2);
+        }
+        header("Authentication", "Basic " + Util.encodeBase64(token));
+        return this;
+    }
 
     public HttpURLConnection generateConnection() throws IOException {
         URL obj = new URL(getUrl());
@@ -90,7 +104,7 @@ public class HttpFacade {
         if (timeout != null) {
             con.setConnectTimeout(timeout);
         }
-        if(fixedSize){
+        if (fixedSize) {
             con.setFixedLengthStreamingMode(body.toString().length());
         }
         setHeaders(con);
@@ -111,15 +125,15 @@ public class HttpFacade {
         }
     }
 
-    private static String urlEncodeUTF8(List<Entry<String, String>> map) {
+    public static String urlEncodeUTF8(Collection<Entry<String, String>> map) {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<?, ?> entry : map) {
+        for (Map.Entry<String, String> entry : map) {
             if (sb.length() > 0) {
                 sb.append("&");
             }
             Object v = entry.getValue();
             if (v != null) {
-                sb.append(String.format("%s=%s", urlEncodeUTF8(entry.getKey().toString()), urlEncodeUTF8(v.toString())));
+                sb.append(String.format("%s=%s", urlEncodeUTF8(entry.getKey()), urlEncodeUTF8(v.toString())));
             }
         }
         return sb.toString();
@@ -132,16 +146,29 @@ public class HttpFacade {
     }
 
     private void setBody(HttpURLConnection con) throws IOException {
-        if (body != null) {
-            con.addRequestProperty("Content-Length", body.toString().length() + "");
-
+        if (!formParams.isEmpty() && body != null) {
+            throw new RuntimeException("You can only specify body or form params, not both!");
+        }
+        String str = generateBody();
+        if (str != null) {
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(body.toString());
+            con.addRequestProperty("Content-Length", str.length() + "");
+            wr.writeBytes(str);
             wr.flush();
             wr.close();
 
         }
+    }
+
+    private String generateBody() {
+        if (body != null) {
+            return body.toString();
+        }
+        if (!formParams.isEmpty()) {
+            return urlEncodeUTF8(formParams);
+        }
+        return null;
     }
 
     public String getBaseUrl() {
@@ -171,5 +198,20 @@ public class HttpFacade {
 
     public Response req() throws IOException {
         return new Response(generateConnection(), isGzip);
+    }
+
+    public String header(String name) {
+        for (Entry<String, String> header : this.headers) {
+            if (header.getKey().equals(name)) {
+                return header.getValue();
+            }
+        }
+        return null;
+    }
+
+    public HttpFacade formParam(String key, String val) {
+        formParams.add(new SimpleEntry<>(key, val));
+        header("Content-Type", "application/x-www-form-urlencoded");
+        return this;
     }
 }
