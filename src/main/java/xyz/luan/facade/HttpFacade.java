@@ -152,8 +152,8 @@ public class HttpFacade {
         String str = generateBody();
         if (str != null) {
             con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             con.addRequestProperty("Content-Length", str.length() + "");
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(str);
             wr.flush();
             wr.close();
