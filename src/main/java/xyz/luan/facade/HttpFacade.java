@@ -25,6 +25,7 @@ public class HttpFacade {
     private Integer timeout = 3 * 60 * 1000;
     private boolean followRedirects;
     private boolean fixedSize = false;
+	private boolean storeContent = true;
 
 
     public HttpFacade(String baseUrl) {
@@ -33,6 +34,7 @@ public class HttpFacade {
         this.queries = new ArrayList<>();
         this.formParams = new ArrayList<>();
         this.followRedirects = false;
+		this.storeContent = true;
     }
 
     public HttpFacade timeout(int ms) {
@@ -95,6 +97,15 @@ public class HttpFacade {
         header("Authentication", "Basic " + Util.encodeBase64(token));
         return this;
     }
+	public HttpFacade noStoredContent() {
+		this.storeContent = false;
+		return this;
+	}
+
+	public HttpFacade storedContent() {
+		this.storeContent = true;
+		return this;
+	}
 
     public HttpURLConnection generateConnection() throws IOException {
         URL obj = new URL(getUrl());
@@ -197,7 +208,7 @@ public class HttpFacade {
     }
 
     public Response req() throws IOException {
-        return new Response(generateConnection(), isGzip);
+		return new Response(generateConnection(), isGzip, this.storeContent);
     }
 
     public String header(String name) {

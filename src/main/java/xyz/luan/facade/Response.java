@@ -12,17 +12,29 @@ public class Response {
 
 	private final HttpURLConnection conn;
 	private final boolean isGzip;
+	private String content;
+	private boolean storeContent;
 
-	Response(HttpURLConnection conn, boolean isGzip) {
+	Response(HttpURLConnection conn, boolean isGzip, boolean storeContent) {
 		this.conn = conn;
 		this.isGzip = isGzip;
+		this.storeContent = storeContent;
 	}
 
 	public String content() throws IOException {
-		if (isGzip) {
-			return contentGzip();
+		if (this.content == null) {
+			String reqContent = isGzip ? contentGzip() : Util.toString(conn.getInputStream());
+			if (shouldStoreContent()) {
+				this.content = reqContent;
+			}
+			return reqContent;
 		}
-		return Util.toString(conn.getInputStream());
+
+		return this.content;
+	}
+
+	private boolean shouldStoreContent() {
+		return this.storeContent;
 	}
 
 	private String contentGzip() throws IOException {
