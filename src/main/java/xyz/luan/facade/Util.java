@@ -22,12 +22,12 @@ public class Util {
     }
 
     public static Matcher extractAll(String pattern, String haystack) {
-        Pattern p = Pattern.compile(".*?" + pattern + ".*?");
-        Matcher m = p.matcher(haystack);
-        if (!m.matches()) {
-            throw new RuntimeException("Invalid text, regex not found: \"" + haystack + "\"");
-        }
-        return m;
+		Pattern p = Pattern.compile(".*?" + pattern + ".*?");
+		Matcher m = p.matcher(haystack);
+		if (!m.matches()) {
+			throw new RuntimeException("Invalid text, regex not found: \"" + haystack + "\"");
+		}
+		return m;
     }
 
     public static String encodeBase64(String str) {
