@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.AbstractMap.SimpleEntry;
@@ -26,8 +27,18 @@ public class HttpFacade {
 	private boolean followRedirects;
 	private boolean fixedSize = false;
 	private boolean storeContent = true;
+	private UrlFacade url;
 
-	public HttpFacade(String baseUrl) {
+	public static void main(String[] args) throws MalformedURLException {
+		String a = "https://regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf";
+		URL url = new URL(a);
+		System.out.println(url.getProtocol());
+		System.out.println(url.getPort());
+		System.out.println(url.getPath());
+	}
+
+	public HttpFacade(String baseUrl) throws MalformedURLException {
+		this.url = new UrlFacade(baseUrl);
 		this.baseUrl = baseUrl;
 		this.headers = new ArrayList<>();
 		this.queries = new ArrayList<>();
