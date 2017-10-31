@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 class UrlFacade {
 	private static final String HTTPS_PROTOCOL = "https";
 	private static final String DEFAULT_PROTOCOL = "http";
+	private String urlParsed;
 	private String urlString;
 	private String protocol = DEFAULT_PROTOCOL;
 	private String auth;
@@ -18,10 +19,6 @@ class UrlFacade {
 	private int port;
 	private String path = "";
 	private String query;
-
-	public UrlFacade() {
-
-	}
 
 	public UrlFacade(String urlString) throws MalformedURLException {
 		this.urlString = urlString;
@@ -39,6 +36,7 @@ class UrlFacade {
 
 			splitAuthHostPort(matcher.group(4));
 		}
+		this.urlParsed = getFullUrl();
 	}
 
 	public void splitAuthHostPort(String fullHost) {
@@ -84,7 +82,7 @@ class UrlFacade {
 
 	}
 
-	public String getFullHost() {
+	private String getFullUrl() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.protocol).append("://");
 		if (hasAuth())
@@ -180,6 +178,18 @@ class UrlFacade {
 
 	public String buildUrl() {
 		String queryStr = HttpFacade.urlEncodeUTF8(getQueries());
-		return getFullHost() + (queryStr.isEmpty() ? "" : "?" + queryStr);
+		return getFullUrl() + (queryStr.isEmpty() ? "" : "?" + queryStr);
 	}
+
+	public String getUrlParsed() {
+		return urlParsed;
+	}
+
+	public String user(String user, String pass) {
+		String token = user + ":" + pass;
+		this.auth = token;
+		this.urlParsed = getFullUrl();
+		return Util.encodeBase64(token);
+	}
+
 }

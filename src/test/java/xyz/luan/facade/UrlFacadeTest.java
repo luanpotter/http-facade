@@ -10,7 +10,7 @@ public class UrlFacadeTest {
 	@Test
 	public void test() throws MalformedURLException {
 		UrlFacade facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals("https://dan:123@regex101.com:8080/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals("https://dan:123@regex101.com:8080/blablabla/blebleble", facade.getUrlParsed());
 	}
 
 	@Test
@@ -25,35 +25,32 @@ public class UrlFacadeTest {
 	@Test
 	public void getQueries() throws MalformedURLException {
 
-		// UrlFacade facade = new
-		// UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		// Assert.assertEquals(2, facade.getQueries().size());
-		//
-		// facade = new
-		// UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=");
-		// Assert.assertEquals(3, facade.getQueries().size());
-		//
-		// facade = new
-		// UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=&qwe=");
-		// Assert.assertEquals(4, facade.getQueries().size());
+		UrlFacade facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals(2, facade.getQueries().size());
 
-		UrlFacade facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble");
+		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=");
+		Assert.assertEquals(3, facade.getQueries().size());
+
+		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=&qwe=");
+		Assert.assertEquals(4, facade.getQueries().size());
+
+		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble");
 		Assert.assertEquals(0, facade.getQueries().size());
 	}
 
 	@Test
 	public void testDefaultProtocol() throws MalformedURLException {
 		UrlFacade facade = new UrlFacade("dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals("http://dan:123@regex101.com:8080/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals("http://dan:123@regex101.com:8080/blablabla/blebleble", facade.getUrlParsed());
 
 		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals("https://dan:123@regex101.com:8080/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals("https://dan:123@regex101.com:8080/blablabla/blebleble", facade.getUrlParsed());
 
 		facade = new UrlFacade("http://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals("http://dan:123@regex101.com:8080/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals("http://dan:123@regex101.com:8080/blablabla/blebleble", facade.getUrlParsed());
 
 		facade = new UrlFacade("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals("http://dan:123@regex101.com/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals("http://dan:123@regex101.com/blablabla/blebleble", facade.getUrlParsed());
 		Assert.assertEquals(80, facade.getPort());
 
 	}
