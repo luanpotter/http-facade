@@ -20,7 +20,7 @@ public class HttpFacade {
 
 	private String method;
 	private String baseUrl;
-	private List<Entry<String, String>> headers, queries, formParams;
+	private List<Entry<String, String>> headers, formParams;
 	private Object body;
 	private boolean isGzip;
 	private Integer timeout = 3 * 60 * 1000;
@@ -31,9 +31,8 @@ public class HttpFacade {
 
 	public HttpFacade(String baseUrl) throws MalformedURLException {
 		this.url = new UrlFacade(baseUrl);
-		this.baseUrl = baseUrl;
+		this.baseUrl = url.getFullHost();
 		this.headers = new ArrayList<>();
-		this.queries = new ArrayList<>();
 		this.formParams = new ArrayList<>();
 		this.followRedirects = false;
 		this.storeContent = true;
@@ -74,7 +73,7 @@ public class HttpFacade {
 	}
 
 	public HttpFacade query(String k, String v) {
-		this.queries.add(new SimpleEntry<>(k, v));
+		this.url.getQueries().add(new SimpleEntry<>(k, v));
 		return this;
 	}
 
@@ -127,7 +126,7 @@ public class HttpFacade {
 	}
 
 	public String getUrl() {
-		String queryStr = urlEncodeUTF8(queries);
+		String queryStr = urlEncodeUTF8(url.getQueries());
 		return baseUrl + (queryStr.isEmpty() ? "" : "?" + queryStr);
 	}
 

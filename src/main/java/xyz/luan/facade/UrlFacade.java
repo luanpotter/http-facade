@@ -110,6 +110,8 @@ class UrlFacade {
 		List<Entry<String, String>> queries = new ArrayList<>();
 		String[] paramsAndValues = this.query.split("&");
 		for (String paramAndValue : paramsAndValues) {
+			if (paramAndValue == null || paramAndValue.trim().length() == 0)
+				continue;
 			String[] splited = paramAndValue.split("=");
 			if (splited.length == 2) {
 				queries.add(new SimpleEntry<>(splited[0], splited[1]));
@@ -176,4 +178,8 @@ class UrlFacade {
 		return this.auth;
 	}
 
+	public String buildUrl() {
+		String queryStr = HttpFacade.urlEncodeUTF8(getQueries());
+		return getFullHost() + (queryStr.isEmpty() ? "" : "?" + queryStr);
+	}
 }

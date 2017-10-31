@@ -12,7 +12,7 @@ public class HttpFacadeTest {
 	public void userTestNoProtocol() throws MalformedURLException {
         HttpFacade facade = new HttpFacade("luan.xyz");
         facade.user("luan", "mypass123");
-        assertEquals("luan:mypass123@luan.xyz", facade.getUrl());
+		assertEquals("http://luan:mypass123@luan.xyz", facade.getUrl());
         assertEquals("Basic bHVhbjpteXBhc3MxMjM=", facade.header("Authentication"));
     }
 
