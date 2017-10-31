@@ -1,6 +1,5 @@
 package xyz.luan.facade;
 
-import java.net.MalformedURLException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ class UrlFacade {
 	private String path = "";
 	private String query;
 
-	public UrlFacade(String urlString) throws MalformedURLException {
+	public UrlFacade(String urlString) {
 		this.urlString = urlString;
 		parse();
 	}
