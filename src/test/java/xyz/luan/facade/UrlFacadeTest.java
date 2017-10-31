@@ -44,5 +44,21 @@ public class UrlFacadeTest {
 
 		facade = new UrlFacade("http://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
 		Assert.assertEquals("http://dan:123@regex101.com:8080/blablabla/blebleble", facade.getFullHost());
+
+		facade = new UrlFacade("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("http://dan:123@regex101.com/blablabla/blebleble", facade.getFullHost());
+		Assert.assertEquals(80, facade.getPort());
+
 	}
+
+	@Test
+	public void testParse() throws MalformedURLException {
+		UrlFacade facade = new UrlFacade("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals(80, facade.getPort());
+		Assert.assertEquals("dan:123", facade.getAuth());
+		Assert.assertEquals("regex101.com", facade.getHost());
+		Assert.assertEquals("/blablabla/blebleble", facade.getPath());
+		Assert.assertEquals("http", facade.getProtocol());
+	}
+
 }

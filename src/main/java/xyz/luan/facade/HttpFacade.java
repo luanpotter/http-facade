@@ -29,14 +29,6 @@ public class HttpFacade {
 	private boolean storeContent = true;
 	private UrlFacade url;
 
-	public static void main(String[] args) throws MalformedURLException {
-		String a = "https://regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf";
-		URL url = new URL(a);
-		System.out.println(url.getProtocol());
-		System.out.println(url.getPort());
-		System.out.println(url.getPath());
-	}
-
 	public HttpFacade(String baseUrl) throws MalformedURLException {
 		this.url = new UrlFacade(baseUrl);
 		this.baseUrl = baseUrl;
