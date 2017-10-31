@@ -8,7 +8,7 @@ import org.junit.Test;
 
 public class HttpFacadeTest {
 
-    @Test
+  @Test
 	public void userTestNoProtocol() throws MalformedURLException {
         HttpFacade facade = new HttpFacade("luan.xyz");
         facade.user("luan", "mypass123");
@@ -16,7 +16,7 @@ public class HttpFacadeTest {
         assertEquals("Basic bHVhbjpteXBhc3MxMjM=", facade.header("Authentication"));
     }
 
-    @Test
+  @Test
 	public void userTestWithProtocol() throws MalformedURLException {
         HttpFacade facade = new HttpFacade("https://luan.xyz");
         facade.user("luan", "mypass123");
