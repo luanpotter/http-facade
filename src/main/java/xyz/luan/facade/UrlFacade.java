@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class UrlFacade {
+	private static final String URL_SPLIT_REGEX = "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?";
+	private static final int DEFAULT_PORT = 80;
 	private static final String HTTPS_PROTOCOL = "https";
 	private static final String DEFAULT_PROTOCOL = "http";
 	private String urlParsed;
@@ -26,8 +28,8 @@ class UrlFacade {
 
 	private void parse() {
 		checkProtocol();
-		this.port = 80;
-		Pattern p = Pattern.compile("^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?");
+		this.port = DEFAULT_PORT;
+		Pattern p = Pattern.compile(URL_SPLIT_REGEX);
 		Matcher matcher = p.matcher(this.urlString);
 		if (matcher.find()) {
 			this.path = matcher.group(5);
@@ -58,10 +60,10 @@ class UrlFacade {
 			try {
 				this.port = Integer.parseInt(allHostAndPort[1]);
 			} catch (NumberFormatException e) {
-				this.port = 80;
+				this.port = DEFAULT_PORT;
 			}
 		} else {
-			this.port = 80;
+			this.port = DEFAULT_PORT;
 		}
 	}
 
@@ -96,7 +98,7 @@ class UrlFacade {
 	}
 
 	private boolean hasPort() {
-		return this.port != 80;
+		return this.port != DEFAULT_PORT;
 	}
 
 	private boolean hasAuth() {
