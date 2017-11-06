@@ -6,13 +6,15 @@
 
 My take on a simple HTTP Façade for easy request making.
 
+Zero-dependency, unobtrusive, Java 7/Google App Engine-ready API for some pretty HTTP handling. 
+
 ## Maven
 
 ```xml
 <dependency>
     <groupId>xyz.luan</groupId>
     <artifactId>http-facade</artifactId>
-    <version>1.6</version>
+    <version>1.7</version>
 </dependency>
 ```
 

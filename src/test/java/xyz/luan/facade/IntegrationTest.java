@@ -9,12 +9,12 @@ import org.junit.Test;
 
 public class IntegrationTest {
 
-    @Test
-    @Ignore
-    public void get() throws IOException {
-        HttpFacade req = new HttpFacade("http://luan.xyz");
-        Response resp = req.get();
+	@Test
+	@Ignore
+	public void get() throws IOException {
+		HttpFacade req = new HttpFacade("http://luan.xyz");
+		Response resp = req.get();
 
-        assertEquals(200, resp.status());
-    }
+		assertEquals(200, resp.status());
+	}
 }

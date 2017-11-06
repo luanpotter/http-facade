@@ -2,14 +2,14 @@ package xyz.luan.facade;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
 
 import org.junit.Test;
 
 public class HttpFacadeTest {
 
 	@Test
-	public void userTestNoProtocol() throws IOException {
+	public void userTestNoProtocol() throws MalformedURLException {
 		HttpFacade facade = new HttpFacade("luan.xyz");
 		facade.user("luan", "mypass123");
 		assertEquals("http://luan:mypass123@luan.xyz", facade.getUrl());
@@ -17,7 +17,7 @@ public class HttpFacadeTest {
 	}
 
 	@Test
-	public void userTestWithProtocol() throws IOException {
+	public void userTestWithProtocol() throws MalformedURLException {
 		HttpFacade facade = new HttpFacade("https://luan.xyz");
 		facade.user("luan", "mypass123");
 		assertEquals("https://luan:mypass123@luan.xyz", facade.getUrl());
