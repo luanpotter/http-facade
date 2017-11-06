@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.AbstractMap.SimpleEntry;
@@ -12,26 +13,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class HttpFacade {
 
 	private String method;
-	private String baseUrl;
-	private List<Entry<String, String>> headers, queries, formParams;
+	private List<Entry<String, String>> headers, formParams;
 	private Object body;
 	private boolean isGzip;
 	private Integer timeout = 3 * 60 * 1000;
 	private boolean followRedirects;
 	private boolean fixedSize = false;
 	private boolean storeContent = true;
+	private UrlFacade url;
 
-
-	public HttpFacade(String baseUrl) {
-		this.baseUrl = baseUrl;
+	public HttpFacade(String baseUrl) throws MalformedURLException {
+		this.url = new UrlFacade(baseUrl);
 		this.headers = new ArrayList<>();
-		this.queries = new ArrayList<>();
 		this.formParams = new ArrayList<>();
 		this.followRedirects = false;
 		this.storeContent = true;
@@ -72,7 +69,7 @@ public class HttpFacade {
 	}
 
 	public HttpFacade query(String k, String v) {
-		this.queries.add(new SimpleEntry<>(k, v));
+		this.url.getQueries().add(new SimpleEntry<>(k, v));
 		return this;
 	}
 
@@ -87,14 +84,8 @@ public class HttpFacade {
 	}
 
 	public HttpFacade user(String user, String pass) {
-		String token = user + ":" + pass;
-		Matcher m = Pattern.compile("([a-z0-9A-Z]*)://(.*)").matcher(baseUrl);
-		if (!m.matches()) {
-			baseUrl = token + "@" + baseUrl;
-		} else {
-			baseUrl = m.group(1) + "://" + token + "@" + m.group(2);
-		}
-		header("Authentication", "Basic " + Util.encodeBase64(token));
+		String token = url.user(user, pass);
+		header("Authentication", "Basic " + token);
 		return this;
 	}
 
@@ -125,8 +116,7 @@ public class HttpFacade {
 	}
 
 	public String getUrl() {
-		String queryStr = urlEncodeUTF8(queries);
-		return baseUrl + (queryStr.isEmpty() ? "" : "?" + queryStr);
+		return url.buildUrl();
 	}
 
 	public static String urlEncodeUTF8(String s) {
@@ -181,10 +171,6 @@ public class HttpFacade {
 			return urlEncodeUTF8(formParams);
 		}
 		return null;
-	}
-
-	public String getBaseUrl() {
-		return baseUrl;
 	}
 
 	public Response get() throws IOException {
