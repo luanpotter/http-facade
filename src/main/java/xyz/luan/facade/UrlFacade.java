@@ -68,19 +68,13 @@ class UrlFacade {
 	}
 
 	private void checkProtocol() {
-		String protocol = this.urlString.substring(0, 8);
-
-		boolean isHttps = protocol.contains("https://");
-		if (isHttps) {
-			this.protocol = HTTPS_PROTOCOL;
-		} else {
+		String[] protocolSplited = this.urlString.split("://");
+		if (protocolSplited.length < 2) {
 			this.protocol = DEFAULT_PROTOCOL;
-		}
-
-		if (!protocol.contains("http")) {
 			this.urlString = this.protocol + "://" + this.urlString;
+		} else {
+			this.protocol = protocolSplited[0];
 		}
-
 	}
 
 	private String getFullUrl() {

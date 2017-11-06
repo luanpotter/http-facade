@@ -64,6 +64,25 @@ public class UrlFacadeTest {
 	}
 
 	@Test
+	public void testProtocol() {
+		UrlFacade facade = new UrlFacade("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("http", facade.getProtocol());
+
+		facade = new UrlFacade("https://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("https", facade.getProtocol());
+
+		facade = new UrlFacade("dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("http", facade.getProtocol());
+		Assert.assertEquals("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf", facade.getUrlString());
+
+		facade = new UrlFacade("ftp://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("ftp", facade.getProtocol());
+
+		facade = new UrlFacade("xablau://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
+		Assert.assertEquals("xablau", facade.getProtocol());
+	}
+
+	@Test
 	public void testUser() {
 		UrlFacade facade = new UrlFacade("http://dan:123@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf");
 		Assert.assertEquals("dan:123", facade.getAuth());
@@ -74,7 +93,6 @@ public class UrlFacadeTest {
 		Assert.assertEquals("dandan:321", facade.getAuth());
 		Assert.assertEquals("http://dandan:321@regex101.com/blablabla/blebleble?bli=blo&blu=hgfhgf", facade.buildUrl());
 		Assert.assertEquals("http://dandan:321@regex101.com/blablabla/blebleble", facade.getUrlParsed());
-
 	}
 
 }
