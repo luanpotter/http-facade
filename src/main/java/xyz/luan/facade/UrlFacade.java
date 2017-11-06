@@ -1,5 +1,6 @@
 package xyz.luan.facade;
 
+import java.net.MalformedURLException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,26 +10,24 @@ import java.util.regex.Pattern;
 
 class UrlFacade {
 	private static final String URL_SPLIT_REGEX = "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?";
-	private static final int DEFAULT_PORT = 80;
-	private static final String HTTPS_PROTOCOL = "https";
+	private static final int NO_PORT = -1;
 	private static final String DEFAULT_PROTOCOL = "http";
 	private String urlParsed;
 	private String urlString;
 	private String protocol = DEFAULT_PROTOCOL;
 	private String auth;
 	private String host;
-	private int port;
+	private int port = NO_PORT;
 	private String path = "";
 	private String query;
 
-	public UrlFacade(String urlString) {
+	public UrlFacade(String urlString) throws MalformedURLException {
 		this.urlString = urlString;
 		parse();
 	}
 
-	private void parse() {
+	private void parse() throws MalformedURLException {
 		checkProtocol();
-		this.port = DEFAULT_PORT;
 		Pattern p = Pattern.compile(URL_SPLIT_REGEX);
 		Matcher matcher = p.matcher(this.urlString);
 		if (matcher.find()) {
@@ -40,7 +39,7 @@ class UrlFacade {
 		this.urlParsed = getFullUrl();
 	}
 
-	public void splitAuthHostPort(String fullHost) {
+	public void splitAuthHostPort(String fullHost) throws MalformedURLException {
 		String[] splited = fullHost.split("@");
 		if (splited.length == 2) {
 			this.auth = splited[0];
@@ -52,7 +51,7 @@ class UrlFacade {
 		}
 	}
 
-	private void setHostAndPort(String[] splited, int index) {
+	private void setHostAndPort(String[] splited, int index) throws MalformedURLException {
 		String[] allHostAndPort = splited[index].split(":");
 		this.host = allHostAndPort[0];
 
@@ -60,10 +59,8 @@ class UrlFacade {
 			try {
 				this.port = Integer.parseInt(allHostAndPort[1]);
 			} catch (NumberFormatException e) {
-				this.port = DEFAULT_PORT;
+				throw new MalformedURLException("Invalid port number :" + allHostAndPort[1]);
 			}
-		} else {
-			this.port = DEFAULT_PORT;
 		}
 	}
 
@@ -92,7 +89,7 @@ class UrlFacade {
 	}
 
 	private boolean hasPort() {
-		return this.port != DEFAULT_PORT;
+		return this.port != NO_PORT;
 	}
 
 	private boolean hasAuth() {
