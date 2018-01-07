@@ -21,7 +21,7 @@ public class HttpFacade {
 	private Object body;
 	private boolean isGzip;
 	private Integer timeout = 3 * 60 * 1000;
-	private boolean followRedirects;
+	private boolean followRedirects = false;
 	private boolean fixedSize = false;
 	private boolean storeContent = true;
 	private UrlFacade url;
@@ -30,8 +30,6 @@ public class HttpFacade {
 		this.url = new UrlFacade(baseUrl);
 		this.headers = new ArrayList<>();
 		this.formParams = new ArrayList<>();
-		this.followRedirects = false;
-		this.storeContent = true;
 	}
 
 	public HttpFacade timeout(int ms) {
