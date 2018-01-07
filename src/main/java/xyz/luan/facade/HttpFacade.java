@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static xyz.luan.facade.Util.urlEncodeUTF8;
+
 public class HttpFacade {
 
 	private String method;
@@ -67,7 +69,7 @@ public class HttpFacade {
 	}
 
 	public HttpFacade query(String k, String v) {
-		this.url.getQueries().add(new SimpleEntry<>(k, v));
+		this.url.getQueryParams().add(new SimpleEntry<>(k, v));
 		return this;
 	}
 
@@ -115,28 +117,6 @@ public class HttpFacade {
 
 	public String getUrl() {
 		return url.buildUrl();
-	}
-
-	public static String urlEncodeUTF8(String s) {
-		try {
-			return URLEncoder.encode(s, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new UnsupportedOperationException(e);
-		}
-	}
-
-	public static String urlEncodeUTF8(Collection<Entry<String, String>> map) {
-		StringBuilder sb = new StringBuilder();
-		for (Map.Entry<String, String> entry : map) {
-			if (sb.length() > 0) {
-				sb.append("&");
-			}
-			Object v = entry.getValue();
-			if (v != null) {
-				sb.append(String.format("%s=%s", urlEncodeUTF8(entry.getKey()), urlEncodeUTF8(v.toString())));
-			}
-		}
-		return sb.toString();
 	}
 
 	private void setHeaders(HttpURLConnection con) {

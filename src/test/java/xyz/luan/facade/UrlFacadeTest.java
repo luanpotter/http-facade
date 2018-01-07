@@ -1,6 +1,7 @@
 package xyz.luan.facade;
 
 import java.net.MalformedURLException;
+import java.util.AbstractMap;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,18 +25,27 @@ public class UrlFacadeTest {
 
 	@Test
 	public void getQueries() throws MalformedURLException {
-
 		UrlFacade facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf");
-		Assert.assertEquals(2, facade.getQueries().size());
+		Assert.assertEquals(2, facade.getQueryParams().size());
 
 		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=");
-		Assert.assertEquals(3, facade.getQueries().size());
+		Assert.assertEquals(3, facade.getQueryParams().size());
 
 		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble?bli=blo&blu=hgfhgf&xpto=&qwe=");
-		Assert.assertEquals(4, facade.getQueries().size());
+		Assert.assertEquals(4, facade.getQueryParams().size());
 
 		facade = new UrlFacade("https://dan:123@regex101.com:8080/blablabla/blebleble");
-		Assert.assertEquals(0, facade.getQueries().size());
+		Assert.assertEquals(0, facade.getQueryParams().size());
+	}
+
+	@Test
+	public void addQueries() throws MalformedURLException {
+		UrlFacade facade = new UrlFacade("https://test.com?foo=bar");
+		facade.getQueryParams().add(new AbstractMap.SimpleEntry<>("a", "2"));
+
+		Assert.assertEquals(2, facade.getQueryParams().size());
+		Assert.assertEquals("bar", facade.getQueryParams().get(0).getValue());
+		Assert.assertEquals("a", facade.getQueryParams().get(1).getKey());
 	}
 
 	@Test

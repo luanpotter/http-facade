@@ -8,6 +8,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static xyz.luan.facade.Util.urlDecodeUTF8;
+import static xyz.luan.facade.Util.urlEncodeUTF8;
+
 class UrlFacade {
 	private static final String URL_SPLIT_REGEX = "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?";
 	private static final int NO_PORT = -1;
@@ -19,7 +22,7 @@ class UrlFacade {
 	private String host;
 	private int port = NO_PORT;
 	private String path = "";
-	private String query;
+	private List<Entry<String, String>> queryParams;
 
 	public UrlFacade(String urlString) throws MalformedURLException {
 		this.urlString = urlString;
@@ -32,7 +35,8 @@ class UrlFacade {
 		Matcher matcher = p.matcher(this.urlString);
 		if (matcher.find()) {
 			this.path = matcher.group(5);
-			this.query = matcher.group(7).replaceAll("\\?", "");
+			String queryString = matcher.group(7);
+			this.queryParams = parseQueryParams(queryString.startsWith("?") ? queryString.substring(1) : queryString);
 
 			splitAuthHostPort(matcher.group(4));
 		}
@@ -96,20 +100,33 @@ class UrlFacade {
 		return this.auth != null && this.auth.trim().length() > 0;
 	}
 
-	public List<Entry<String, String>> getQueries() {
+	private List<Entry<String,String>> parseQueryParams(String query) {
 		List<Entry<String, String>> queries = new ArrayList<>();
-		String[] paramsAndValues = this.query.split("&");
+		if (query.trim().isEmpty()) {
+			return queries;
+		}
+
+		String[] paramsAndValues = query.split("&");
 		for (String paramAndValue : paramsAndValues) {
 			if (paramAndValue == null || paramAndValue.trim().length() == 0)
 				continue;
-			String[] splited = paramAndValue.split("=");
-			if (splited.length == 2) {
-				queries.add(new SimpleEntry<>(splited[0], splited[1]));
+			String[] split = paramAndValue.split("=");
+			String key = urlDecodeUTF8(split[0]);
+			if (split.length == 2) {
+				queries.add(new SimpleEntry<>(key, urlDecodeUTF8(split[1])));
 			} else {
-				queries.add(new SimpleEntry<>(splited[0], ""));
+				queries.add(new SimpleEntry<>(key, ""));
 			}
 		}
 		return queries;
+	}
+
+	public List<Entry<String, String>> getQueryParams() {
+		return queryParams;
+	}
+
+	public void setQueryParams(List<Entry<String, String>> queryParams) {
+		this.queryParams = queryParams;
 	}
 
 	public int getPort() {
@@ -140,14 +157,6 @@ class UrlFacade {
 		this.path = path;
 	}
 
-	public String getQuery() {
-		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
-	}
-
 	public String getHost() {
 		return host;
 	}
@@ -169,7 +178,7 @@ class UrlFacade {
 	}
 
 	public String buildUrl() {
-		String queryStr = HttpFacade.urlEncodeUTF8(getQueries());
+		String queryStr = urlEncodeUTF8(getQueryParams());
 		return getFullUrl() + (queryStr.isEmpty() ? "" : "?" + queryStr);
 	}
 
