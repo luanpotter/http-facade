@@ -1,15 +1,16 @@
 package xyz.luan.facade;
 
+import javax.net.ssl.*;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ public class HttpFacade {
 	private boolean followRedirects = false;
 	private boolean fixedSize = false;
 	private boolean storeContent = true;
+	private boolean disableSecurity = false;
 	private UrlFacade url;
 
 	public HttpFacade(String baseUrl) throws MalformedURLException {
@@ -99,6 +101,45 @@ public class HttpFacade {
 		return this;
 	}
 
+	private void applyDisableSecurity(HttpsURLConnection conn) {
+		TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(X509Certificate[] certs, String authType) {
+			}
+
+			public void checkServerTrusted(X509Certificate[] certs, String authType) {
+			}
+
+		}};
+
+		SSLContext sc = getSSLContext();
+		try {
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+		} catch (KeyManagementException e) {
+			throw new RuntimeException("Should never happen!", e);
+		}
+
+		HostnameVerifier allHostsValid = new HostnameVerifier() {
+			public boolean verify(String hostname, SSLSession session) {
+				return true;
+			}
+		};
+
+		conn.setHostnameVerifier(allHostsValid);
+		conn.setSSLSocketFactory(sc.getSocketFactory());
+	}
+
+	private SSLContext getSSLContext() {
+		try {
+			return SSLContext.getInstance("SSL");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("Don't have SSL?", e);
+		}
+	}
+
 	public HttpURLConnection generateConnection() throws IOException {
 		URL obj = new URL(getUrl());
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -109,6 +150,9 @@ public class HttpFacade {
 		}
 		if (fixedSize) {
 			con.setFixedLengthStreamingMode(body.toString().length());
+		}
+		if (disableSecurity && con instanceof HttpsURLConnection) {
+			applyDisableSecurity((HttpsURLConnection) con);
 		}
 		setHeaders(con);
 		setBody(con);
@@ -188,6 +232,21 @@ public class HttpFacade {
 	public HttpFacade formParam(String key, String val) {
 		formParams.add(new SimpleEntry<>(key, val));
 		header("Content-Type", "application/x-www-form-urlencoded");
+		return this;
+	}
+
+	/*
+	 * This disables SSL certificate validation.
+	 * Beware! Just use this if you know what you are doing!
+	 * It will make you susceptible to man-in-the-middle attacks,
+	 * and possibly other severe security concerns.
+	 *
+	 * I'm deprecating it for now to disencourage usage,
+	 * but it won't be removed.
+	 */
+	@Deprecated
+	public HttpFacade disableSecuritySSLCertificateValidation() {
+		this.disableSecurity = true;
 		return this;
 	}
 }
