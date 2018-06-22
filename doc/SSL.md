@@ -68,9 +68,9 @@ To solve this, you need to download the certificate and add it to HttpFacade; th
 
 First, download the certificate using your browser. E.g. for Chromium (the procedure for Firefox is very similar):
 
-<img src="doc/ssl_p1.png">
+<img src="ssl_p1.png">
 
-<img src="doc/ssl_p2.png">
+<img src="ssl_p2.png">
 
 Finally, click Export and then save the file somewhere, keeping note of the name.
 
