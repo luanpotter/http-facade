@@ -36,3 +36,7 @@ More complex request:
         .body("{ id: 42, name: \"Luan\" }")
     .post();
 ```
+
+Parse URL's, set form and query params, handle cookies, authentication (built-in non-platform-dependent Base64 enc/dec), and more.
+
+For problems with SSL requests and Java outdated CA certificate repositories, see [here](doc/SSL.md).

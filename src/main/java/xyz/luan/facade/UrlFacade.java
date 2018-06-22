@@ -12,7 +12,7 @@ import static xyz.luan.facade.Util.urlDecodeUTF8;
 import static xyz.luan.facade.Util.urlEncodeUTF8;
 
 class UrlFacade {
-	private static final String URL_SPLIT_REGEX = "^(([^:\\/?#]+):)?(\\/\\/([^\\/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?";
+	private static final String URL_SPLIT_REGEX = "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\\\?([^#]*))?(#(.*))?";
 	private static final int NO_PORT = -1;
 	private static final String DEFAULT_PROTOCOL = "http";
 	private String urlParsed;
@@ -44,19 +44,19 @@ class UrlFacade {
 	}
 
 	public void splitAuthHostPort(String fullHost) throws MalformedURLException {
-		String[] splited = fullHost.split("@");
-		if (splited.length == 2) {
-			this.auth = splited[0];
+		String[] split = fullHost.split("@");
+		if (split.length == 2) {
+			this.auth = split[0];
 			int index = 1;
-			setHostAndPort(splited, index);
-		} else if (splited.length == 1) {
+			setHostAndPort(split, index);
+		} else if (split.length == 1) {
 			int index = 0;
-			setHostAndPort(splited, index);
+			setHostAndPort(split, index);
 		}
 	}
 
-	private void setHostAndPort(String[] splited, int index) throws MalformedURLException {
-		String[] allHostAndPort = splited[index].split(":");
+	private void setHostAndPort(String[] split, int index) throws MalformedURLException {
+		String[] allHostAndPort = split[index].split(":");
 		this.host = allHostAndPort[0];
 
 		if (allHostAndPort.length == 2) {
@@ -69,12 +69,12 @@ class UrlFacade {
 	}
 
 	private void checkProtocol() {
-		String[] protocolSplited = this.urlString.split("://");
-		if (protocolSplited.length < 2) {
+		String[] protocolSplit = this.urlString.split("://");
+		if (protocolSplit.length < 2) {
 			this.protocol = DEFAULT_PROTOCOL;
 			this.urlString = this.protocol + "://" + this.urlString;
 		} else {
-			this.protocol = protocolSplited[0];
+			this.protocol = protocolSplit[0];
 		}
 	}
 
