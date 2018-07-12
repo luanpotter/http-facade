@@ -1,9 +1,9 @@
 package xyz.luan.facade;
 
 import javax.net.ssl.*;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +29,7 @@ public class HttpFacade {
     private UrlFacade url;
     private List<Entry<String, String>> headers, formParams;
     private Object body;
+    private String encoding = "UTF-8";
 
     private Integer timeout = 3 * 60 * 1000;
     private boolean isGzip = false;
@@ -66,6 +67,11 @@ public class HttpFacade {
             str.append(c.getKey()).append("=").append(c.getValue()).append("; ");
         }
         header("Cookie", str.toString());
+        return this;
+    }
+
+    public HttpFacade encoding(String encoding) {
+        this.encoding = encoding;
         return this;
     }
 
@@ -220,11 +226,10 @@ public class HttpFacade {
         if (str != null) {
             con.setDoOutput(true);
             con.addRequestProperty("Content-Length", str.length() + "");
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(str);
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream(), encoding);
+            wr.write(str);
             wr.flush();
             wr.close();
-
         }
     }
 
