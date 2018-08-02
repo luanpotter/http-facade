@@ -10,12 +10,17 @@ import java.util.zip.GZIPInputStream;
 
 public class Response {
 
-	private final HttpURLConnection conn;
-	private final boolean isGzip;
-	private String content;
-	private boolean storeContent;
+	protected final HttpURLConnection conn;
+	protected final boolean isGzip;
+	protected String content;
+	protected boolean storeContent;
 
-	Response(HttpURLConnection conn, boolean isGzip, boolean storeContent) {
+	Response() {
+		this.conn = null;
+		this.isGzip = false;
+	}
+
+	protected Response(HttpURLConnection conn, boolean isGzip, boolean storeContent) {
 		this.conn = conn;
 		this.isGzip = isGzip;
 		this.storeContent = storeContent;
