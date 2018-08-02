@@ -6,7 +6,7 @@
 
 My take on a simple HTTP Façade for easy request making.
 
-Zero-dependency, unobtrusive, Java 7/Google App Engine-ready API for some pretty HTTP handling. 
+Zero-dependency, unobtrusive, Java 7/Google App Engine-ready API for some pretty HTTP handling.
 
 ## Maven
 
@@ -41,11 +41,11 @@ Parse URL's, set form and query params, handle cookies, authentication (built-in
 
 For problems with SSL requests and Java outdated CA certificate repositories, see [here](doc/SSL.md).
 
-## Mocking Request
+## Mocking Requests
 
-If you want to mock some request and retrieve a specific response.
+If you want to mock a request in order to always retrieve a specific response, instead of actually making the request, you can use MockedHttpFacade and MockedResponse.
 
-Inject/Instantiate MockMyService to do the request!
+Simply inject/instantiate a mocked service to do the request; see the following example:
 
 ```java
 
