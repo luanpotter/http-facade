@@ -23,4 +23,5 @@ public class HttpFacadeTest {
         assertEquals("https://luan:mypass123@luan.xyz", facade.getUrl());
         assertEquals("Basic bHVhbjpteXBhc3MxMjM=", facade.header("Authentication"));
     }
+
 }
