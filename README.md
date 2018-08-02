@@ -40,3 +40,32 @@ More complex request:
 Parse URL's, set form and query params, handle cookies, authentication (built-in non-platform-dependent Base64 enc/dec), and more.
 
 For problems with SSL requests and Java outdated CA certificate repositories, see [here](doc/SSL.md).
+
+## Mocking Request
+
+If you want to mock some request and retrieve a specific response.
+
+Inject/Instantiate MockMyService to do the request!
+
+```java
+
+    class MyService {
+
+        public void sendRequest(String url) {
+            getFacade(url).get();
+        }
+
+        public HttpFacade getFacade(String url) {
+            return new HttpFacade(url);
+        }
+    }
+
+    class MockMyService extends MyService {
+        @Override
+        public HttpFacade getFacade(String url) {
+            MockedResponse.build().withStatus(200).withContent("{ name : mock }");
+            return new MockedHttpFacade(url).mockResponse(mock);
+        }
+    }
+
+```
