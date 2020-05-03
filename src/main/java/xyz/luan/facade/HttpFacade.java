@@ -45,8 +45,10 @@ public class HttpFacade {
 
     private List<InputStream> customKeystoreCertificates = new ArrayList<>();
 
-    private void allowNewerMethods(String... methods) {
+    static {
         try {
+            String[] methods = { "CONNECT", "TRACE", "PATCH" };
+
             Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
 
             Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -62,7 +64,7 @@ public class HttpFacade {
 
             methodsField.set(null, newMethods);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+            System.out.println("Additional verbs could not be loaded: " + e);
         }
     }
 
@@ -70,7 +72,6 @@ public class HttpFacade {
         this.url = new UrlFacade(baseUrl);
         this.headers = new ArrayList<>();
         this.formParams = new ArrayList<>();
-        this.allowNewerMethods("CONNECT", "TRACE", "PATCH");
     }
 
     public HttpFacade timeout(int ms) {
