@@ -64,7 +64,7 @@ public class HttpFacade {
 
             methodsField.set(null, newMethods);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.out.println("Additional verbs could not be loaded: " + e);
+            System.err.println("Additional verbs could not be loaded: " + e);
         }
     }
 
