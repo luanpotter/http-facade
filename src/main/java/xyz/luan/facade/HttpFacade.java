@@ -4,6 +4,8 @@ import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,8 +19,11 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import static xyz.luan.facade.Util.urlEncodeUTF8;
@@ -39,6 +44,29 @@ public class HttpFacade {
     private boolean disableSecurity = false;
 
     private List<InputStream> customKeystoreCertificates = new ArrayList<>();
+
+    static {
+        try {
+            String[] methods = { "CONNECT", "TRACE", "PATCH" };
+
+            Field methodsField = HttpURLConnection.class.getDeclaredField("methods");
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(methodsField, methodsField.getModifiers() & ~Modifier.FINAL);
+
+            methodsField.setAccessible(true);
+
+            String[] oldMethods = (String[]) methodsField.get(null);
+            Set<String> methodsSet = new LinkedHashSet<>(Arrays.asList(oldMethods));
+            methodsSet.addAll(Arrays.asList(methods));
+            String[] newMethods = methodsSet.toArray(new String[0]);
+
+            methodsField.set(null, newMethods);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            System.err.println("Additional verbs could not be loaded: " + e);
+        }
+    }
 
     public HttpFacade(String baseUrl) throws MalformedURLException {
         this.url = new UrlFacade(baseUrl);
@@ -117,7 +145,7 @@ public class HttpFacade {
     }
 
     private void applyDisableSecurity(HttpsURLConnection conn) {
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
@@ -128,7 +156,7 @@ public class HttpFacade {
             public void checkServerTrusted(X509Certificate[] certs, String authType) {
             }
 
-        }};
+        } };
 
         SSLContext sc = getSSLContext();
         try {
@@ -149,7 +177,8 @@ public class HttpFacade {
 
     private void addCustomKeystore(HttpsURLConnection conn) {
         try {
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory
+                    .getInstance(TrustManagerFactory.getDefaultAlgorithm());
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
             keystore.load(null);
 
@@ -166,7 +195,8 @@ public class HttpFacade {
             sslContext.init(null, trustManagers, null);
 
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | KeyManagementException e) {
+        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException
+                | KeyManagementException e) {
             throw new RuntimeException(e);
         }
     }
@@ -259,6 +289,18 @@ public class HttpFacade {
         return method("DELETE").req();
     }
 
+    public Response connect() throws IOException {
+        return method("CONNECT").req();
+    }
+
+    public Response trace() throws IOException {
+        return method("TRACE").req();
+    }
+
+    public Response patch() throws IOException {
+        return method("PATCH").req();
+    }
+
     public HttpFacade method(String method) {
         this.method = method;
         return this;
@@ -284,13 +326,11 @@ public class HttpFacade {
     }
 
     /*
-     * This disables SSL certificate validation.
-     * Beware! Just use this if you know what you are doing!
-     * It will make you susceptible to man-in-the-middle attacks,
-     * and possibly other severe security concerns.
+     * This disables SSL certificate validation. Beware! Just use this if you know
+     * what you are doing! It will make you susceptible to man-in-the-middle
+     * attacks, and possibly other severe security concerns.
      *
-     * I'm deprecating it for now to discourage usage,
-     * but it won't be removed.
+     * I'm deprecating it for now to discourage usage, but it won't be removed.
      */
     @Deprecated
     public HttpFacade disableSecuritySSLCertificateValidation() {
