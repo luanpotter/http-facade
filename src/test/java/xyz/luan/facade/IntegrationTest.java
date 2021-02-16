@@ -1,16 +1,16 @@
 package xyz.luan.facade;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IntegrationTest {
 
 	@Test
-	@Ignore
+	@Disabled
 	public void get() throws IOException {
 		HttpFacade req = new HttpFacade("http://luan.xyz");
 		Response resp = req.get();
@@ -19,7 +19,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testDisableSSLValidation() throws IOException {
 		HttpFacade req = new HttpFacade("https://viaja.dotz.com.br");
 		req.disableSecuritySSLCertificateValidation();
