@@ -14,7 +14,7 @@ Zero-dependency, unobtrusive, Java 7/Google App Engine-ready API for some pretty
 <dependency>
     <groupId>xyz.luan</groupId>
     <artifactId>http-facade</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.1</version>
 </dependency>
 ```
 
